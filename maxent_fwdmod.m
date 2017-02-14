@@ -139,7 +139,7 @@ function maxent_fwdmod()
     v = transpose(G*G'); % E3*v = image
     v = reshape(v,[],1);
     B1 = E3*v;
-    gamma = sum(B1)
+%     gamma = sum(B1)
     B1 = real(B1);
     B1 = (reshape(B1, [lx lx]));
     figure
