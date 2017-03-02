@@ -1,0 +1,1 @@
+The forward model has been developed for indoor Radar imaging, and set up to be used by code following Total Variation algorithm. It uses utilities developed by Chengbo Li and Yin Zhang in TVAL3_beta2.4.
