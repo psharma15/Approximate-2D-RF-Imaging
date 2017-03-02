@@ -1,7 +1,9 @@
-% This code generates forward model of imaging. 
-%    Need to check accuracy of this model.
-%    10 Feb 2017
-
+% This code generates forward model of imaging, includes amplitude
+% variation by reflection from object and attenuation.
+% 10 Feb 2017, Pragya Sharma
+% 24-02 : Checked if RCS can be used like that. Seems okay. This just gets
+% signal from tag-object-receiver. if object present, this is multiplied,
+% otherwise not. 
 %% Finding A matrix
 c = physconst('LightSpeed');
 f = 'f3';
@@ -96,7 +98,7 @@ plot(Pos_recv(:,1),Pos_recv(:,2),'bo','MarkerFaceColor','b','MarkerSize',8);
 
 % For following expression of e, tag/ receiver cannot be on some grid
 % point. R1 or R2 cannot be zero
-x_v = linspace(-0.45,0.45,101); % x at corner of pixel
+x_v = linspace(-0.45,0.45,151); % x at corner of pixel
 delxy = abs(x_v(1) - x_v(2));
 y_v = x_v;
 
@@ -117,9 +119,10 @@ R2 = repmat(R2,1,Nfreq); % All tag, recv, freq
 dummy3 = ones(1,Ntag*Nrecv);
 Freq = repmat(kron(Freq,dummy3),[lx*lx 1]);
 % The amplitude is changed
-e = exp(-1j*(2*pi/c)*(Freq.*(R1+R2)));
-e_fwd = sqrt(RCS/(4*pi))*(1/(4*pi))*(c./(Freq.*R1.*R2)).*e; 
+e1 = exp(-1j*(2*pi/c)*(Freq.*(R1+R2)));
+e_fwd = sqrt(RCS/(4*pi))*(1/(4*pi))*(c./(Freq.*R1.*R2)).*e1; 
 e_fwd = transpose(e_fwd); % == A matrix
+e = e_fwd;
 [l,m] = size(e_fwd);
 
 %% Verify
@@ -131,7 +134,7 @@ x = reshape(img,[],1);
 std_dev = 0.05;
 V = e_fwd*x ; %+ std_dev*randn(l,1)
 R = V*V'; 
-e_bwd = transpose(e);
+e_bwd = transpose(e1);
 % B = sum((e_bwd'*R).*transpose(e_bwd),2); B = real(B);
 B = e_bwd'*V; B = abs(B);
 B = (reshape(B, [lx lx]));
