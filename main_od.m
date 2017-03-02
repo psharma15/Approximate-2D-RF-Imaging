@@ -6,30 +6,25 @@ clear all;
 
 %% Defining all variables here
 c = physconst('LightSpeed');
-f = 'f3';
+f = 'f2';
 Ntag = 16; 
-Nrecv = 4;
-object = 'circlefill';
-SNR=20; %unit dB 
+Nrecv = 12;
+object = 'ellipsefill';
+SNR = 0; %unit dB 
 l = 1;% Defining l; Scaling factor for the image area
 b = 1;% Defining scaling for receivers
-m = 1;% Choosing scaling factor of scatterer position
-k1 = 0.15; % Choosing shifting factor of scatterer position in x and y direction
-k2 = -0.22;
+m = 0.75;% Choosing scaling factor of scatterer position
+k1 = -0.15; % Choosing shifting factor of scatterer position in x and y direction
+k2 = 0.35;
 th=0.6;
-RCS=.5;
+RCS=.1;
 %% Starting code here, position of tags, receivers and object scatterers
 
 switch(f)
-    case 'f1'
-        % Working Frequency range f1 = 900MHz, Second harmonic f2 = 1.8GHz,
-        % 21 frequencies
-        Freq_v = (0.2:0.05:2.4)*1e9;
-        
     case 'f2'
-        % Working Frequency range f1 = 700MHz, Second harmonic f2 = 1.4GHz
+        % Working Frequency range f1 = 900MHz, Second harmonic f2 = 1.8GHz,
         % 51 frequencies
-        Freq_v = [ 2.0 2.1 2.2 2.3 2.4]*1e9;
+        Freq_v = (1.7:0.01:2.2)*1e9;
         
     case 'f3'
         % Working Frequency range f1 = 900MHz, Second harmonic f2 = 1.8GHz,
@@ -451,7 +446,7 @@ disp(['This block Signal After Calibration in ',num2str(t1),' secs.']);
 %% Image recovery
 
 % x_v=(-.5:0.005: .5);
-x_v = linspace(-0.5,0.5,100);
+x_v = linspace(-0.5,0.5,151);
 y_v=x_v;
 lx=length(x_v);
 
