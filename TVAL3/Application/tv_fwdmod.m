@@ -7,14 +7,16 @@ function tv_fwdmod()
     f = 'f3';
     Ntag = 16; 
     Nrecv = 4;
-    RCS = 0.5;
-    object = 'ellipsefill';
+    RCS = 0.1;
+    object = 'var';
     SNR = 20; 
     m = 1;
     shift_x = 0.05; 
     shift_y = -0.04;
 
-    switch(f)     
+    switch(f) 
+        case 'f1'
+            Freq = linspace(1.7,4.2,21)*1e9;
         case 'f3'
             Freq =(1.7:0.05:2.2)*1e9;               
         case 'f5'
@@ -257,7 +259,7 @@ function tv_fwdmod()
     assignin('base','G_calib',G_calib);
 
     %% Generate e == A matrix, G == y (y = Ax)
-    x_v = linspace(-0.3,0.3,32);
+    x_v = linspace(-0.4,0.4,101);
     y_v = x_v;
     lx = length(x_v);
     [X, Y] = meshgrid(x_v,y_v);
@@ -276,10 +278,7 @@ function tv_fwdmod()
     e_fwd = sqrt(RCS/(4*pi))*(1/(4*pi))*(c./(Freq0.*R1.*R2)).*e1; 
     e_fwd = transpose(e_fwd); % == A matrix
     e = e_fwd;
-    
     V = reshape(G_calib,[],1); 
-    assignin('base','e',e);
-    assignin('base','V',V);
     % e_bwd check constant factor
     minfreq = min(Freq);
     e_bwd = transpose(((Freq0/minfreq).^2) .* e1); 
@@ -287,12 +286,13 @@ function tv_fwdmod()
     B = (reshape(B, [lx lx]));
     figure;
     mesh(X,Y,B')
+    axis ([-0.5 0.5 -0.5 0.5])
     axis 'square'
-    axis 'tight'
     xlabel('x-axis','FontSize',14)
     ylabel('y-axis','FontSize',14)
     view(0,90)
-
+    assignin('base','e',e);
+    assignin('base','V',V);
 end
 
 %% generating signal without scatterer
