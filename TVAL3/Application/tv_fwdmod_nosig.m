@@ -5,10 +5,10 @@
 function tv_fwdmod_nosig()
     %% Generating A matrix
     c = physconst('LightSpeed');
-    f = 'f3';
+    f = 'f5';
     Ntag = 16; 
     Nrecv = 4;
-    RCS = 0.5;
+    RCS = 0.1;
     switch(f)     
         case 'f3'
             Freq =(1.7:0.05:2.2)*1e9;               
@@ -97,7 +97,8 @@ function tv_fwdmod_nosig()
 
     % For following expression of e, tag/ receiver cannot be on some grid
     % point. R1 or R2 cannot be zero
-    x_v = linspace(-0.45,0.45,151); % x at corner of pixel
+    Ngrid = 151;
+    x_v = linspace(-0.45,0.45,Ngrid); % x at corner of pixel
     y_v = x_v;
 
     lx = length(x_v);
@@ -126,16 +127,34 @@ function tv_fwdmod_nosig()
 
     %% Generating V (== y) matrix
     img = zeros(lx,lx);
-    img(69:75,17:23) = 1;
+    obj = 'sparse';
+    switch obj
+        case 'sparse'
+            Nscat = 6;
+            grid_index = 1:Ngrid;
+            temp2 = randperm(Ngrid);
+            xpos = grid_index(temp2(1:Nscat));
+            temp3 = randperm(Ngrid);
+            ypos = grid_index(temp3(1:Nscat));
+            for i = 1:Nscat
+                img(xpos(i),ypos(i)) = 1;
+            end
+        case 'block'
+            img(39:42,17:23) = 1;
+        otherwise
+            fprintf('This object doesn''t exist.\n');
+    end
     figure;
-    mesh(X,Y,img'); colormap('gray')
+    mesh(X,Y,img); colormap('gray'); view(0,90); axis 'square'
     x = reshape(img,[],1);
     std_dev = 0.05;
     e_bwd = transpose(e1);
     V = e_fwd*x + std_dev*randn(l,1);
+    assignin('base','V',V);
     B = e_bwd'*V; B = abs(B);
     B = (reshape(B, [lx lx]));
     figure;
     mesh(X,Y,B')
-    axis 'square'
+    axis 'square'; view(0,90); 
+    
 end
